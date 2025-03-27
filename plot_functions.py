@@ -91,6 +91,8 @@ def plot_curve_on_edge(ax, pos_start, pos_end,z_curve , color, num_points=100, l
     # Parameterize the line in R^2 along t (for the x and y directions)
     x_line = pos_start[0] + direction[0] * t
     y_line = pos_start[1] + direction[1] * t
+
+    
     
     # Evaluate the function f along the interval [0, a]
     #z_curve = f(t, a)  # Pass 'a' (length of the edge) to the function
