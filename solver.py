@@ -247,7 +247,7 @@ def solve_pde_dirichlet_EE(edges, boundary_vertices, nx, T, nt, problem_data):
             raise ValueError("Singular or ill-conditioned system in Explicit Euler!")
         Y[n+1, :] = y_next
         
-    return times, Y, all_vertices
+    return Y
 
 def solve_pde_dirichlet_theta(edges, boundary_vertices, nx, T, nt, problem_data, theta):
     """
