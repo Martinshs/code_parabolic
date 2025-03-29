@@ -6,6 +6,7 @@ from graph import define_graph_full
 
 # Data and PDE functions: coefficients, potentials, initial and boundary conditions.
 from data_ex1 import compute_exact_solution    # Exact solution for validation.
+
 from data_ex1 import a_coefficient               # Coefficient function a(x).
 from data_ex1 import b_coefficient               # Coefficient function b(x).
 from data_ex1 import p_potential                 # Potential function p(x).
@@ -14,16 +15,14 @@ from data_ex1 import initial_condition_dirichlet_full  # Initial condition for D
 from data_ex1 import g_boundary_condition_ex1         # Dirichlet boundary condition function g.
 
 # PDE solvers: each function implements a different numerical scheme.
-from solver import solve_pde_dirichlet_CN    # Crank-Nicolson method.
 from solver import solve_pde_dirichlet_IE    # Implicit Euler method.
-from solver import solve_pde_dirichlet_EE    # Explicit Euler method (not used here).
-from solver import solve_pde_dirichlet_theta # Theta method (generalized time-stepping).
-from solver import solve_pde_dirichlet_SIEM  # SIEM method.
-from solver import solve_pde_dirichlet_EXPE  # Exponential time integration method.
-
-import numpy as np
-import matplotlib.pyplot as plt
 import time
+import numpy as np
+# Import necessary modules
+from plot_functions import plot_edges, plot_graph_3d_with_curves
+
+
+
 
 
 # =============================================================================
@@ -115,7 +114,8 @@ def main():
     print("\nAccuracy:")
     print(f"{'Metric':<7} | {'IE':<9}")
     print(f"{'-'*7} | {'-'*9}")
-    print(f"{'Error':<7} | {rel_err_IE:<9.3e}")
+    print(f"{'Error':<7} | {rel_err_IE:<9.3e}") #Here Error correspond to the L2 
+                                                #error in space and sup in time.
 
 
     # -----------------------------------------------------------------------------
@@ -133,15 +133,16 @@ def main():
     # plot_edges: Visualizes the solution (Y) on each edge of the graph.
     # Inputs:
     #   - Y: Solution array.
-    #   - compute_exact_solution: function exact solution.
     #   - nx, nt, T: Spatial and temporal discretization parameters.
     #   - t_index: Time index used for plotting the solution curve.
     #   - full_edges: The dictionary defining graph connectivity.
     #   - show: Whether to display the plot.
     #   - save: Whether to save the plot to file.
     #   - example: Identifier for the saved file.
-    plot_edges(Y, compute_exact_solution, nx, nt, T, t_index,
-                full_edges, show=True, save=False, example='example_0')
+    #   - compute_exact_solution: function exact solution.
+
+    plot_edges(Y, nx, nt, T, t_index, full_edges, show=True, 
+               save=True, example='example_2d',exact_sol = compute_exact_solution)
 
     # -----------------------------------------------------------------------------
     # Plot the graph along with the solution curves in 3D.
@@ -155,7 +156,6 @@ def main():
     # plot_graph_3d_with_curves: Generates a 3D visualization of the graph,
     # overlaying the solution curves. Inputs include:
     #   - Y: The solution array.
-    #   - compute_exact_solution: function exact solution.
     #   - full_edges: Graph connectivity dictionary.
     #   - nx, nt, T: Discretization parameters.
     #   - t_index: Time index used for plotting the solution curve.
@@ -165,9 +165,13 @@ def main():
     #   - zorder: Plot layering order.
     #   - save: Whether to save the plot to file.
     #   - example: Identifier for the saved file.
-    plot_graph_3d_with_curves(Y, compute_exact_solution, full_edges, nx, nt, T, t_index, positions, 
+    #   - compute_exact_solution: function exact solution.
+
+    plot_graph_3d_with_curves(Y, full_edges, nx, nt, T, t_index, positions, 
                             show=True, elevation=33, azimuth=320, zorder=100, 
-                            save=False, example="example_0_3d")
+                            save=True, example="example_3d", 
+                            exact_sol = compute_exact_solution)
+    print("Plotted")
 
 # -----------------------------------------------------------------------------
 # Run the main function if this script is executed as the main module.

@@ -6,12 +6,15 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.lines import Line2D
+
+import math
 
 # =============================================================================
 # Function 1: Plot the solution on individual edges (2D plots)
 # =============================================================================
 
-def plot_edges(computed_sol, exact_sol, nx, nt, T, t_index, full_edges, show=True, save=False, example='example_0'):
+def plot_edges(computed_sol, nx, nt, T, t_index, full_edges, show=True, save=False, example='example_0', exact_sol=None):
     """
     Plot the computed and exact solutions on each edge of the graph at a given time.
 
@@ -24,6 +27,8 @@ def plot_edges(computed_sol, exact_sol, nx, nt, T, t_index, full_edges, show=Tru
     -----------
     computed_sol : np.ndarray
         2D array (nt x total_dof) containing the computed solution at all time steps.
+    exact_sol : func
+        Function that compute the exact solution. If exact_sol==None, then the exact solution is not ploted 
     nx : int
         Number of interior degrees of freedom per edge.
     nt : int
@@ -50,12 +55,20 @@ def plot_edges(computed_sol, exact_sol, nx, nt, T, t_index, full_edges, show=Tru
     edges, interior_vertices, boundary_vertices = define_graph_full(full_edges)
     all_vertices = interior_vertices + boundary_vertices
     all_vertices.sort()
-    y_ex = exact_sol(edges, all_vertices, interior_vertices, boundary_vertices, nx, t=mesht[t_index])
+    if exact_sol!=None:
+        y_ex = exact_sol(edges, all_vertices, interior_vertices, boundary_vertices, nx, t=mesht[t_index])
     
+    edge_names = list(full_edges.keys())
+    k = len(edge_names)
+    L = math.ceil(k / 5) * 5      # next multiple of 5
+    padding = L - k
+    new_names = edge_names + ['-'] * padding
+    N = L // 5
+    matrix_names = np.array(new_names).reshape(N,5)
+
     # Create a mosaic of subplots for 10 edges.
     fig, axs = plt.subplot_mosaic(
-        [['y1', 'y2', 'y3', 'y4', 'y5'],
-         ['y6', 'y7', 'y8', 'y9', 'y10']],
+        matrix_names,
         dpi=100, figsize=(18, 5),
         gridspec_kw={
             "top": 0.9,
@@ -74,9 +87,10 @@ def plot_edges(computed_sol, exact_sol, nx, nt, T, t_index, full_edges, show=Tru
     for e_idx, (s, t2) in enumerate(full_edges.values()):
         offset = e_idx * nx
         offset_end = offset + nx
-        na_e_idx = 'y' + str(e_idx + 1)
+        na_e_idx = 'e' + str(e_idx + 1)
         ax = axs[na_e_idx]
-        ax.plot(x_nodes, y_ex[offset: offset_end], 'k', label='Exact solution', linewidth=4)
+        if exact_sol!=None:
+            ax.plot(x_nodes, y_ex[offset: offset_end], 'k', label='Exact solution', linewidth=4)
         ax.plot(x_nodes, computed_sol[t_index, offset: offset_end], 'r--', label='Computed solution', linewidth=3)
         ax.set_title(f"Edge {e_idx+1}: (v{s+1} → v{t2+1})")
         ax.grid(True)
@@ -205,8 +219,8 @@ def plot_curve_on_edge(ax, pos_start, pos_end, z_curve, color, num_points=100, l
 # Function 4: 3D Graph Plot with Solution Curves
 # =============================================================================
 
-def plot_graph_3d_with_curves(computed_sol, exact_sol, full_edges, nx, nt, T, k, positions,
-                              show=True, elevation=30, azimuth=30, zorder=0, save=False, example="example_0_3d"):
+def plot_graph_3d_with_curves(computed_sol, full_edges, nx, nt, T, t_index, positions,
+                              show=True, elevation=30, azimuth=30, zorder=0, save=False, example="example_0_3d", exact_sol=None):
     """
     Plot the graph in 3D with overlaid solution curves.
 
@@ -219,6 +233,8 @@ def plot_graph_3d_with_curves(computed_sol, exact_sol, full_edges, nx, nt, T, k,
     -----------
     computed_sol : np.ndarray
         Computed solution array (nt x total_dof).
+    computed_sol : func
+        Function that compute the exact solution. If exact_sol==None, then the exact solution is not ploted.
     full_edges : dict
         Dictionary mapping edge identifiers to tuples (s, t) of vertex indices.
     nx : int
@@ -255,6 +271,8 @@ def plot_graph_3d_with_curves(computed_sol, exact_sol, full_edges, nx, nt, T, k,
     fig = plt.figure(figsize=(12, 6), dpi=100)
     ax = fig.add_subplot(projection='3d')
 
+    k = t_index #rename t_index
+
     # Plot the graph edges as quiver (arrows) to indicate connectivity.
     for start, end in edges:
         pos_start = np.array(positions[start] + [0])
@@ -268,7 +286,7 @@ def plot_graph_3d_with_curves(computed_sol, exact_sol, full_edges, nx, nt, T, k,
                   color='k', linewidth=3, arrow_length_ratio=0, alpha=0.8)
 
     # Plot vertices with different sizes depending on importance.
-    bigg_nodes = ['v1', 'v2', 'v3', 'v5', 'v6', 'v8', 'v9', 'v10']
+    bigg_nodes = []
     for node, pos in positions.items():
         x, y = pos
         z = 0
@@ -296,15 +314,21 @@ def plot_graph_3d_with_curves(computed_sol, exact_sol, full_edges, nx, nt, T, k,
     edges_2, interior_vertices, boundary_vertices = define_graph_full(full_edges)
     all_vertices = interior_vertices + boundary_vertices
     mesht = np.linspace(0, T, nt)
-    y_ex = exact_sol(edges_2, all_vertices, interior_vertices, boundary_vertices, nx, t=mesht[k])
+    if exact_sol != None:
+        y_ex = exact_sol(edges_2, all_vertices, interior_vertices, boundary_vertices, nx, t=mesht[k])
     
-    # Plot the exact solution curves on each edge.
-    for i, (s, t) in enumerate(full_edges.values()):
-        e_loc = (f'v{s+1}', f'v{t+1}')
-        if e_loc in edges:
-            y_loc_ex = y_ex[i * nx: i * nx + nx]
-            plot_curve_on_edge(ax, positions[e_loc[0]], positions[e_loc[1]], y_loc_ex,
-                               '#153863', num_points=nx, zorder=zorder)
+        # Plot the exact solution curves on each edge.
+        for i, (s, t) in enumerate(full_edges.values()):
+            e_loc = (f'v{s+1}', f'v{t+1}')
+            if e_loc in edges:
+                y_loc_ex = y_ex[i * nx: i * nx + nx]
+                plot_curve_on_edge(ax, positions[e_loc[0]], positions[e_loc[1]], y_loc_ex,
+                                '#153863', num_points=nx, zorder=zorder)
+        legend_handles = [
+        Line2D([0], [0], color='#153863', lw=3, linestyle='solid', label='Exact solution'),
+        Line2D([0], [0], color='C3', lw=3, linestyle='dashed', label='Computed solution')]
+    else:
+        legend_handles = [Line2D([0], [0], color='C3', lw=3, linestyle='dashed', label='Computed solution')]
     
     # Plot the computed solution curves (using a dashed line).
     for i, (s, t) in enumerate(full_edges.values()):
@@ -319,10 +343,10 @@ def plot_graph_3d_with_curves(computed_sol, exact_sol, full_edges, nx, nt, T, k,
         v_name = f'v{v+1}'
         if v_name in positions:
             E = len(full_edges)
-            y_ex_vertex = y_ex[E * nx + v]
+            y_com_vertex = computed_sol[k][E * nx + v]
             x_point = [positions[v_name][0], positions[v_name][0]]
             y_point = [positions[v_name][1], positions[v_name][1]]
-            ax.plot(x_point, y_point, [0, y_ex_vertex], color='k', linewidth=1, linestyle='dashed')
+            ax.plot(x_point, y_point, [0, y_com_vertex], color='k', linewidth=1, linestyle='dashed')
 
     # Set plot limits and adjust projection scaling.
     ax.set_zlim(-2, 2)
@@ -335,16 +359,11 @@ def plot_graph_3d_with_curves(computed_sol, exact_sol, full_edges, nx, nt, T, k,
     ax.set_xticklabels([])
     ax.set_yticklabels([])
 
-    # Create legend for the curves.
-    from matplotlib.lines import Line2D
-    legend_handles = [
-        Line2D([0], [0], color='#153863', lw=3, linestyle='solid', label='Exact solution'),
-        Line2D([0], [0], color='C3', lw=3, linestyle='dashed', label='Computed solution')
-    ]
+    # Add legend for the curves.
     ax.legend(handles=legend_handles, loc='upper center', bbox_to_anchor=(0.6, 0.89), ncol=2, fontsize=12)
 
     # Set the overall title and adjust layout.
-    fig.suptitle(f'Real solution vs Computed solution at time t={mesht[k]:.02f}', x=0.55, y=0.89, fontsize=16)
+    fig.suptitle(f'Solution at time t={mesht[k]:.02f}', x=0.55, y=0.89, fontsize=16)
     plt.subplots_adjust(top=0.92)
     
     # Save the figure if requested.
