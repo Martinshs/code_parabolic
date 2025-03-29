@@ -1,7 +1,9 @@
 # PDE on Graphs
 
 This repository provides a comprehensive numerical framework for solving parabolic partial differential equations (PDEs) of the type
+
 $$\partial_t y_e - \partial_x(a \partial_x y_e) + b \partial_x y_e + p y_e = f_e,$$
+
 on finite metric graphs with Dirichlet boundary consition in the boundary vertices. The implementation is based on a finite element discretization that takes into account both the interior and boundary degrees of freedom of a graph. The code was contructed to easey adaptation for any graph.
 
 For the time integration several schemes can be used, including Implicit Euler, Crank–Nicolson, Explicit Euler, the θ-method, Semi-Implicit Euler, and Exponential Euler.
@@ -113,4 +115,5 @@ This project is licensed under the **MIT License**.
 
 ## Acknowledgements
 
-Founded by the TRR154.
+Founded by the [TRR154](https://www.trr154.fau.de/trr-154-en/).
+
