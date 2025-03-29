@@ -29,7 +29,7 @@ This function encapsulates the directional relationship of edges with respect to
 
 $$
 \begin{cases}
-\partial_t y_e - \partial_{x}\bigl(a_e y_e\bigr) + b_e \partial_x y_e + p_e y_e = f_e, & (x,t) \in e \times (0, T), \\
+\partial_t y_e - \partial_{x}\bigl(a_e \partial_{x} y_e\bigr) + b_e \partial_x y_e + p_e y_e = f_e, & (x,t) \in e \times (0, T), \\
 y_e(x, 0) = y_e^0(x), & x \in e,
 \end{cases}
 $$
