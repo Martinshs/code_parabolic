@@ -5,9 +5,9 @@ $$\partial_t y_e - \partial_x(a \partial_x y_e) + b \partial_x y_e + p y_e = f_e
 on finite metric graphs with Dirichlet boundary consition in the boundary vertices. The implementation is based on a finite element discretization that takes into account both the interior and boundary degrees of freedom of a graph. The code was contructed to easey adaptation for any graph.
 
 For the time integration several schemes can be used, including Implicit Euler, Crank–Nicolson, Explicit Euler, the θ-method, Semi-Implicit Euler, and Exponential Euler.
-
+<p align="center">
 <img src="/images/images_example_3d/plot_superposition167.png" alt="Gráfico" width="400"/>
-
+</p>
 ---
 
 ## Problem Formulation
@@ -89,8 +89,9 @@ You can run the solvers from the notebooks or via Python scripts. A more detail 
 ## Results
 
 Includes detailed visualizations (mosaic and 3D) to evaluate solver performance and solution accuracy. 
-
-<img src="/images/images_example_2d/plot_each_edge_167.png" alt="Gráfico" width="400"/>
+<p align="center">
+<img src="/images/images_example_2d/plot_each_edge_167.png" alt="Gráfico" width="800"/>
+</p>
 
 
 ---
