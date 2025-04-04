@@ -1,12 +1,12 @@
 # PDE on Graphs
 
-This repository provides a comprehensive numerical framework for solving parabolic partial differential equations (PDEs) of the type
+This repository provides a library to solve parabolic partial differential equations (PDEs) of the type
 
 $$\partial_t y_e - \partial_x(a \partial_x y_e) + b \partial_x y_e + p y_e = f_e,$$
 
-on finite metric graphs with Dirichlet boundary consition in the boundary vertices. The implementation is based on a finite element discretization that takes into account both the interior and boundary degrees of freedom of a graph. The code was contructed to easey adaptation for any graph.
+on finite metric graphs with Dirichlet boundary conditions at the boundary vertices. The implementation is based on a finite element discretization that takes into account both the interior and boundary degrees of freedom of a graph. The code was constructed to ease adaptation for any graph.
 
-For the time integration several schemes can be used, including Implicit Euler, Crank–Nicolson, Explicit Euler, the θ-method, Semi-Implicit Euler, and Exponential Euler.
+Several schemes can be used for the time integration, including Implicit Euler, Crank–Nicolson, Explicit Euler, the θ-method, Semi-Implicit Euler, and Exponential Euler.
 <p align="center">
 <img src="/images/images_example_3d/plot_superposition167.png" alt="Gráfico" width="400"/>
 </p>
