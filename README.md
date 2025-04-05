@@ -36,13 +36,12 @@ $$
 
 complemented with coupling and boundary conditions:
 
-$$
-\begin{cases}
-y_{e_1}(v, t) = y_{e_2}(v, t), & (v,t) \in \mathcal{V}_0 \times (0, T), \\
-y_e(v, t) = g_v(t), & (v,t) \in \mathcal{V}_b \times (0, T), \\
-\sum_{e \in \mathcal{E}(v)} \partial_x y_e(v, t) n_e(v) = 0, & (v,t) \in \mathcal{V}_0 \times (0, T).
-\end{cases}
-$$
+$$\begin{cases}
+y_{e_1}(v,t) = y_{e_2}(v,t) & \forall e_1,e_2 \in \mathcal{E}(v),\hspace{1mm} (v,t)\in \mathcal{V}_0 \times (0,T), \qquad &\text{(Continuity condition)} \newline
+y_e(v,t) = g_v(t) &  (v,t)\in\mathcal{V}_b \times (0,T), \qquad  &\text{(Boundary condition)} \newline
+\sum \partial_x y_e(v,t) \, n_e(v) = 0 & (v,t)\in \mathcal{V}_0 \times (0,T), \qquad  &\text{(Kirchhoff condition)}
+\end{cases}$$
+
 
 ---
 
